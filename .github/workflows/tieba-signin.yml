@@ -46,6 +46,7 @@ jobs:
           DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
           WECOM_KEY: ${{ secrets.WECOM_KEY }}
           PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+          MAGICPUSHER_WEBHOOK: ${{ secrets.MAGICPUSHER_WEBHOOK }}
         run: node dist/index.js
       
       - name: 处理结果
