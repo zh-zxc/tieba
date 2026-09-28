@@ -52,6 +52,7 @@ exports.sendTelegram = sendTelegram;
 exports.sendDingTalk = sendDingTalk;
 exports.sendWecom = sendWecom;
 exports.sendPushPlus = sendPushPlus;
+exports.sendMagicPusher = sendMagicPusher;
 exports.sendNotification = sendNotification;
 /**
  * 通知模块 - 支持多种推送渠道发送脚本运行结果通知
@@ -256,6 +257,31 @@ function sendPushPlus(options) {
     });
 }
 /**
+ * MagicPusher Webhook通知
+ * @param options - MagicPusher配置选项
+ * @returns 发送结果
+ */
+function sendMagicPusher(options) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { webhook, title, content } = options;
+        if (!webhook)
+            return { success: false, message: 'MagicPusher Webhook未设置', channel: 'MagicPusher' };
+        try {
+            const response = yield axios_1.default.post(webhook, {
+                title: title || '通知',
+                content: content
+            });
+            handleNotifyResult('MagicPusher', response);
+            return { success: true, message: 'MagicPusher通知发送成功', channel: 'MagicPusher' };
+        }
+        catch (error) {
+            const err = error;
+            console.error(`❌ MagicPusher通知发送失败: ${err.message}`);
+            return { success: false, message: err.message, channel: 'MagicPusher' };
+        }
+    });
+}
+/**
  * 发送通知到所有已配置的平台
  * @param summary - 要发送的通知内容
  * @returns 是否有任何通知发送成功
@@ -310,6 +336,14 @@ function sendNotification(summary) {
         if (process.env.PUSHPLUS_TOKEN) {
             tasks.push(sendPushPlus({
                 token: process.env.PUSHPLUS_TOKEN,
+                title: title,
+                content: summary
+            }));
+        }
+        // MagicPusher Webhook通知
+        if (process.env.MAGICPUSHER_WEBHOOK) {
+            tasks.push(sendMagicPusher({
+                webhook: process.env.MAGICPUSHER_WEBHOOK,
                 title: title,
                 content: summary
             }));

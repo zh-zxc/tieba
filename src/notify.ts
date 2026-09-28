@@ -12,7 +12,8 @@ import {
   TelegramOptions,
   DingTalkOptions,
   WeComOptions,
-  PushPlusOptions
+  PushPlusOptions,
+  MagicPusherOptions
 } from './types/notify.types';
 import * as crypto from 'crypto';
 
@@ -205,6 +206,29 @@ export async function sendPushPlus(options: PushPlusOptions): Promise<NotifyResu
 }
 
 /**
+ * MagicPusher Webhook通知
+ * @param options - MagicPusher配置选项
+ * @returns 发送结果
+ */
+export async function sendMagicPusher(options: MagicPusherOptions): Promise<NotifyResult> {
+  const { webhook, title, content } = options;
+  if (!webhook) return { success: false, message: 'MagicPusher Webhook未设置', channel: 'MagicPusher' };
+  
+  try {
+    const response = await axios.post(webhook, {
+      title: title || '通知',
+      content: content
+    });
+    handleNotifyResult('MagicPusher', response);
+    return { success: true, message: 'MagicPusher通知发送成功', channel: 'MagicPusher' };
+  } catch (error) {
+    const err = error as Error;
+    console.error(`❌ MagicPusher通知发送失败: ${err.message}`);
+    return { success: false, message: err.message, channel: 'MagicPusher' };
+  }
+}
+
+/**
  * 发送通知到所有已配置的平台
  * @param summary - 要发送的通知内容
  * @returns 是否有任何通知发送成功
@@ -265,6 +289,15 @@ export async function sendNotification(summary: string): Promise<boolean> {
   if (process.env.PUSHPLUS_TOKEN) {
     tasks.push(sendPushPlus({
       token: process.env.PUSHPLUS_TOKEN,
+      title: title,
+      content: summary
+    }));
+  }
+
+  // MagicPusher Webhook通知
+  if (process.env.MAGICPUSHER_WEBHOOK) {
+    tasks.push(sendMagicPusher({
+      webhook: process.env.MAGICPUSHER_WEBHOOK,
       title: title,
       content: summary
     }));
