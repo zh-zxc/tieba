@@ -50,3 +50,9 @@ export interface PushPlusOptions {
   content: string;
   template?: 'html' | 'json' | 'markdown' | 'txt';
 } 
+
+export interface MagicPusherOptions {
+  webhook: string;
+  title?: string;
+  content: string;
+}

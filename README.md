@@ -103,6 +103,7 @@
 | `DINGTALK_SECRET` | 钉钉机器人的安全密钥(可选) | 同上 |
 | `WECOM_KEY` | 企业微信机器人的WebHook Key | [企业微信机器人文档](https://developer.work.weixin.qq.com/document/path/91770) |
 | `PUSHPLUS_TOKEN` | PushPlus推送Token | [PushPlus文档](https://www.pushplus.plus/) |
+| `MAGICPUSHER_WEBHOOK` | MagicPusher 的 Webhook URL（将发送标题与摘要内容） | MagicPusher 官方文档 |
 
 > 💡 **提示**：您可以根据自己的需求配置一个或多个通知渠道。如果配置了多个渠道，脚本将向所有渠道发送通知。
 
